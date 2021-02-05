@@ -22,13 +22,13 @@ $(function () {
 
   function refreshEvents() {
     $.getJSON({
-      url: "https://modasapi.azurewebsites.net/api/event/count",
+      url: "https://modasclient.azurewebsites.net/api/event/count",
       success: function (response, textStatus, jqXhr) {
         if (response != $('#total').html()) {
           console.log("success");
           // Toast
           toast("Motion Detected", "New motion alert detected!", "fas fa-user-secret");
-          // play sound effect
+          // play sound effect 
           snd.play();
           getEvents($('#current').data('val'));
         }
@@ -77,7 +77,7 @@ $(function () {
     $('#last, #next').prop('disabled', $('#end').html() == $('#total').html());
   }
 
-  function get_long_date(str){
+  function get_long_date(str) {
     var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var dow = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     var full_date = str.split("T")[0];
@@ -88,21 +88,21 @@ $(function () {
 
     return dow[d.getDay()] + ", " + month_names[d.getMonth()] + " " + date + ", " + year;
   }
-  function get_short_date(str){
-      return str.split("T")[0];
+  function get_short_date(str) {
+    return str.split("T")[0];
   }
-  function get_time(str){
-      var time = str.split("T")[1];
-      var hours = Number(time.split(":")[0]);
-      var am_pm = hours >= 12 ? " PM" : " AM";
-      hours = hours > 12 ? hours - 12 : hours;
-      hours == 0 ? hours = "12" : hours;
-      hours = hours < 10 ? "0" + hours : hours + "";
-      var minutes = time.split(":")[1];
-      return hours + ":" + minutes + am_pm;
-  } 
+  function get_time(str) {
+    var time = str.split("T")[1];
+    var hours = Number(time.split(":")[0]);
+    var am_pm = hours >= 12 ? " PM" : " AM";
+    hours = hours > 12 ? hours - 12 : hours;
+    hours == 0 ? hours = "12" : hours;
+    hours = hours < 10 ? "0" + hours : hours + "";
+    var minutes = time.split(":")[1];
+    return hours + ":" + minutes + am_pm;
+  }
 
-  function toast(header, text, icon){
+  function toast(header, text, icon) {
     // create unique id for toast using array length
     var id = toasts.length;
     // generate html for toast
@@ -126,7 +126,7 @@ $(function () {
     });
   }
 
-  function initAutoRefresh(){
+  function initAutoRefresh() {
     // if auto-refresh button is set to true
     if ($('#auto-refresh').data('val')) {
       // display checked icon
@@ -138,10 +138,10 @@ $(function () {
       $('#auto-refresh i').removeClass('fa-check-square').addClass('fa-square');
       // if the timer is on, clear it
       if (refreshInterval) {
-          clearInterval(refreshInterval);
+        clearInterval(refreshInterval);
       }
     }
-}
+  }
 
   // event listeners for first/next/prev/last buttons
   $('#next, #prev, #first, #last').on('click', function () {
