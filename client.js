@@ -31,9 +31,9 @@ $(function () {
   function getEvents(page) {
     $.getJSON({
       headers: { "Authorization": 'Bearer ' + Cookies.get('token') },
-      url: "https://modasclient.azurewebsites.net/api/event/pagesize/10/page/" + page,
+      url: "https://apimodas.azurewebsites.net//api/event/pagesize/10/page/" + page,
       success: function (response, textStatus, jqXhr) {
-        //console.log(response);
+        // console.log(response);
         showTableBody(response.events);
         showPagingInfo(response.pagingInfo);
         initButtons();
@@ -53,7 +53,7 @@ $(function () {
 
   function refreshEvents() {
     $.getJSON({
-      url: "https://modasclient.azurewebsites.net/api/event/count",
+      url: "https://apimodas.azurewebsites.net//api/event/count",
       success: function (response, textStatus, jqXhr) {
         if (response != $('#total').html()) {
           console.log("success");
@@ -181,7 +181,7 @@ $(function () {
   function showErrors(errors) {
     for (var i = 0; i < errors.length; i++) {
       // apply bootstrap is-invalid class to any field with errors
-      errors[i].addClass('is-invalid');;
+      errors[i].addClass('is-invalid');
     }
     // shake modal for effect
     $('#signInModal').css('animation-duration', '0.7s')
@@ -210,8 +210,9 @@ $(function () {
     }
     // AJAX to update database
     $.ajax({
-      headers: { "Content-Type": "application/json" },
-      url: "https://modasclient.azurewebsites.net/api/event/" + $(this).data('id'),
+      headers: { "Content-Type": "application/json", "Authorization": 'Bearer ' + Cookies.get('token') },
+      // headers: { "Content-Type": "application/json" },
+      url: "https://apimodas.azurewebsites.net//api/event/" + $(this).data('id'),
       type: 'patch',
       data: JSON.stringify([{ "op": "replace", "path": "Flagged", "value": checked }]),
       success: function () {
@@ -256,12 +257,24 @@ $(function () {
     }
   });
 
+  $("#signInModal").keypress(function (e) {
+    if (e.keyCode === 13) {
+      submitForm(e);
+    }
+  });
 
-  $('#submitButton').on('click', function (e) {
+  $("#submitButton").click(function (e) {
+    submitForm(e);
+  });
+
+
+  function submitForm(e) {
+    // submitForm();
     e.preventDefault();
 
     // reset any fields marked with errors
     $('.form-control').removeClass('is-invalid');
+    $("#errorLogin").empty();
     // create an empty errors array
     var errors = [];
     // check for empty username
@@ -279,7 +292,7 @@ $(function () {
       // verify username and password using the token api
       $.ajax({
         headers: { 'Content-Type': 'application/json' },
-        url: "https://modasapi.azurewebsites.net/api/token",
+        url: "https://apimodas.azurewebsites.net//api/token",
         type: 'post',
         data: JSON.stringify({ "username": $('#username').val(), "password": $('#password').val() }),
         success: function (data) {
@@ -292,9 +305,16 @@ $(function () {
         error: function (jqXHR, textStatus, errorThrown) {
           // log the error to the console
           console.log("The following error occured: " + jqXHR.status, errorThrown);
+          errors.push($('#username'));
+          errors.push($('#password'));
+          showErrors(errors);
+          $("#errorLogin").text("Either username or password is WRONG!");          
+
         }
       });
     }
-  });
+
+  }
+
 
 });
