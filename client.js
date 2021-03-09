@@ -85,10 +85,64 @@ $(function () {
       html += "</td>";
       html += "<td>" + get_time(e[i].stamp) + "</td>";
       html += "<td>" + e[i].loc + "</td>";
+      // html += "<td>" + "<button class=\"fas fa-times bg-success mb-0 btn deleteEventButton\" data-id=\"" + e[i].id + "\"></button>" + "</td>";
+      html += "<td>" + "<button type=\"button\" class=\"btn btn-primary waves-effect waves-light deleteEventButton\" data-toggle=\"modal\" data-target=\"#centralModalSm\" data-id=\"" + e[i].id + "\"><i class=\"fas fa-minus-circle\"></i></button>" + "</td>";
       html += "</tr> ";
     }
     $('tbody').html(html);
+
   }
+
+  $('body').on('click', '.deleteEventButton', function () {
+    let id = $(this).data('id');
+
+    var deletePopup = `<div class="modal fade" id="centralModalSm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header">
+          <h4 class="modal-title w-100" id="myModalLabel">Delete Event</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!--Body-->
+        <div class="modal-body">
+          Are you sure you want to delete event ` + id + `
+        </div>
+        <!--Footer-->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm confirmDelete" data-dismiss="modal" data-deleteid=\"` + id + `\" >Delete</button>
+        </div>
+      </div>`;
+    $('#poppup').html(deletePopup);
+
+  });
+
+  $('body').on('click', '.confirmDelete', function () {
+
+    console.log("delete confirm")
+    console.log(this)
+
+    var settings = {
+      "url": "https://apimodas.azurewebsites.net/api/event/" + $(this).data('deleteid'),
+      "method": "DELETE",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": 'Bearer ' + Cookies.get('token'),
+      },
+    };
+    
+    $.ajax(settings).done(function (response) {
+      console.log(response);
+    });
+
+  });
+
 
   function showPagingInfo(p) {
     $('#start').html(p.rangeStart);
@@ -199,6 +253,7 @@ $(function () {
   // http://api.jquery.com/on/#direct-and-delegated-events
   $('tbody').on('click', '.flag', function () {
     var checked;
+    console.log(this)
     if ($(this).data('checked')) {
       $(this).data('checked', false);
       $(this).removeClass('fas').addClass('far');
@@ -308,7 +363,7 @@ $(function () {
           errors.push($('#username'));
           errors.push($('#password'));
           showErrors(errors);
-          $("#errorLogin").text("Either username or password is WRONG!");          
+          $("#errorLogin").text("Either username or password is WRONG!");
 
         }
       });
